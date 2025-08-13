@@ -1,0 +1,110 @@
+import java.util.*;
+
+class User {
+    String username;
+    String password;
+    boolean hasReservation;
+
+    User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.hasReservation = false;
+    }
+}
+
+public class ReservationSystem {
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final Map<String, User> users = new HashMap<>();
+    private static User currentUser = null;
+
+    public static void main(String[] args) {
+        while (true) {
+            if (currentUser == null) {
+                System.out.println("\n1. Register\n2. Login\n3. Exit");
+                System.out.print("Choose an option: ");
+                int option = getIntInput();
+
+                switch (option) {
+                    case 1 -> register();
+                    case 2 -> login();
+                    case 3 -> {
+                        System.out.println("Exiting...");
+                        return;
+                    }
+                    default -> System.out.println("Invalid option.");
+                }
+            } else {
+                System.out.println("\n1. Book Reservation\n2. Cancel Reservation\n3. Logout");
+                System.out.print("Choose an option: ");
+                int option = getIntInput();
+
+                switch (option) {
+                    case 1 -> bookReservation();
+                    case 2 -> cancelReservation();
+                    case 3 -> {
+                        currentUser = null;
+                        System.out.println("Logged out successfully.");
+                    }
+                    default -> System.out.println("Invalid option.");
+                }
+            }
+        }
+    }
+
+    private static void register() {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        if (users.containsKey(username)) {
+            System.out.println("Username already exists.");
+            return;
+        }
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+        users.put(username, new User(username, password));
+        System.out.println("Registration successful!");
+    }
+
+    private static void login() {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+        User user = users.get(username);
+        if (user != null && user.password.equals(password)) {
+            currentUser = user;
+            System.out.println("Login successful! Welcome, " + username);
+        } else {
+            System.out.println("Invalid credentials.");
+        }
+    }
+
+    private static void bookReservation() {
+        if (currentUser.hasReservation) {
+            System.out.println("You already have a reservation.");
+        } else {
+            currentUser.hasReservation = true;
+            System.out.println("Reservation booked successfully!");
+        }
+    }
+
+    private static void cancelReservation() {
+        if (currentUser.hasReservation) {
+            currentUser.hasReservation = false;
+            System.out.println("Reservation cancelled successfully!");
+        } else {
+            System.out.println("No reservation to cancel.");
+        }
+    }
+
+    // Safe integer input method
+    private static int getIntInput() {
+        while (true) {
+            try {
+                return Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Please enter a number: ");
+            }
+        }
+    }
+}
+`
